@@ -1,8 +1,9 @@
 ---
 title: "TREAT Accrual Report"
-#author: "Andrew Borst"
+output:
+  word_document:
+    #reference_docx: word_styles.docx
 date: "October 28, 2016"
-output: word_document
 ---
 
 1.	TREAT-001 -- Observational 
@@ -12,6 +13,12 @@ output: word_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(pander)
+panderOptions('table.alignment.default', function(df)
+    ifelse(sapply(df, is.numeric), 'right', 'left'))
+panderOptions('table.split.table', Inf)
+panderOptions('big.mark', ",")
+panderOptions('keep.trailing.zeros', TRUE)
 ```
 
 
@@ -84,8 +91,20 @@ ondate = as.Date(na.omit(demog2$ON_STUDY_DATE), origin="1899-12-30")
 #Code as function with arguments (on study dates, start date, end date, 
 #  optional expected n per month )
 accrualGraph(ondate,startdate=as.Date("2013-06-01"),expmnth=7)
+
 ```
 
+```{r, echo=FALSE}
+Site=c("IU","Mayo","VCU", "Total")
+IU = c("Fairbanks Drug and Alcohol Rehabilitation Hospital", "Indiana University Hospital / IU Simon Cancer Center", "Eskenazi Hospital")
+Mayo = "Mayo Clinic"
+VCU = "Virginia Commonwealth University (VCU)"
+# enrollment numbers by site and total for CASES
+Cases=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
+          length(which(demog$ARMS == "CASES")))
+ptable = data.frame(Site,Cases)
+pander(ptable)
+```
 
 TREAT 002
 
@@ -98,6 +117,8 @@ demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Report
 ondate = as.Date(na.omit(demog$ON_STUDY_DATE), origin="1899-12-30")
 #ondate = as.Date(demog$ON_STUDY_DATE, format="%m/%d/%Y")
 accrualGraph(ondate,startdate=as.Date("2013-06-01"),expmnth=4.5)
+
+head(mtcars)
 
 ```
 
