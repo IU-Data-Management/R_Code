@@ -1,13 +1,15 @@
 # Create accrual vs. expected graph 
 # Author: Andrew Borst
 # Created: 02/10/2016
-# Last Updated: 10/26/2016 
+# Last Updated: 10/31/2016 
 
 # 1) Create function to graph expected vs actual accrualGraph
 # 2) Import data
 # 3) Call function
 
-accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expmnth=0) {
+#Code as function with arguments (on study dates, start date, end date of the accrual, 
+#   expected end date of accrual, expected n per month )
+accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expenddate=Sys.Date(), expmnth=0) {
   #install pacakges (if not installed) and load
   packages <- c("ggplot2", "scales")
   if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
@@ -35,13 +37,18 @@ accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expmnth=0) {
   # are summed into beginning of first month, need to move sums one month over for end-of-month
   msum = c(0,cumsum(as.vector(unlist(tapply(enroll2$Count,enroll2$Month,sum)))))
   
-  mnths = append(mnths, enddate)
+  #since seq of months was built by month the enddate will always be the first of the month 
+  if(!enddate %in% mnths) {
+    mnths = append(mnths, enddate)
+  }
+  
   acc = data.frame(mnths,msum)
   acc$accgrp="Actual"
   
   #append expected month sequence into graph data if it was passed to function
   if(!expmnth==0){
-    expdf = data.frame(mnths,msum=seq(from=0,to=(expmnth*(nrow(acc)-1)),by=expmnth),accgrp="Expected")
+    expmnths =   seq(startdate, expenddate, by="month")
+    expdf = data.frame(mnths=expmnths,msum=seq(from=0,to=(expmnth*(length(expmnths)-1)),by=expmnth),accgrp="Expected")
     acc = rbind(acc, expdf)
   }
   
@@ -49,30 +56,8 @@ accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expmnth=0) {
   ggplot(data = acc, aes(mnths, msum,group=accgrp,colour=accgrp)) +
     geom_line(aes(linetype=accgrp)) +
     geom_point()  +
-    xlab("Months") + ylab("Accrual") +
+    xlab("Accrual Date") + ylab("Number of Patients Accrued") +
     scale_colour_discrete(name="") +    
     scale_linetype_discrete(name="")    
 }
-
-#read xls or xlsx
-library("readxl")
-
-
-demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_001.xlsx")
-# demog <- read.delim("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_001.txt")
-demog2 = demog[which(demog$ARMS == "CASES"),]
-
-ondate = as.Date(na.omit(demog2$ON_STUDY_DATE), origin="1899-12-30")
-#ondate = as.Date(demog$ON_STUDY_DATE, format="%m/%d/%Y")
-
-#Code as function with arguments (on study dates, start date, end date, 
-#  optional expected n per month )
-accrualGraph(ondate,startdate=as.Date("2013-06-01"),expmnth=7)
-
-demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_002.xlsx")
-#Code as function with arguments (on study dates, start date, end date, 
-#  optional expected n per month )
-ondate = as.Date(na.omit(demog$ON_STUDY_DATE), origin="1899-12-30")
-#ondate = as.Date(demog$ON_STUDY_DATE, format="%m/%d/%Y")
-str(ondate)
-accrualGraph(ondate,startdate=as.Date("2013-06-01"),expmnth=4.5)
+```
