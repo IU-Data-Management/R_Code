@@ -84,9 +84,10 @@ accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expenddate=Sys.Da
 library("readxl")
 
 demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_001.xlsx")
+colnames(demog)
 # demog <- read.delim("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_001.txt")
-demog2 = demog[which(demog$ARMS == "CASES"),]
-demog3 = demog[which(demog$ARMS == "CONTROLS"),]
+demog2 = demog[which(demog$ARMS == "CASES" & demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)")),]
+demog3 = demog[which(demog$ARMS == "CONTROLS" & demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)")),]
 
 Site=c("IU","Mayo","VCU", "Total by Arm")
 IU = c("Fairbanks Drug and Alcohol Rehabilitation Hospital", "Indiana University Hospital / IU Simon Cancer Center", "Eskenazi Hospital")
@@ -94,9 +95,9 @@ Mayo = "Mayo Clinic"
 VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
 Cases=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
-          length(which(demog$ARMS == "CASES")))
+          nrow(demog2))
 Controls=c(length(which(demog3$STUDY_SITE %in% IU)),length(which(demog3$STUDY_SITE %in% Mayo)), length(which(demog3$STUDY_SITE %in% VCU)),
-          length(which(demog$ARMS == "CONTROLS")))
+          nrow(demog3))
 Total=c(Cases[1]+Controls[1], Cases[2]+Controls[2], Cases[3]+Controls[3], Cases[4]+Controls[4])
 pander(data.frame(Site,Cases, Controls, Total))
 
@@ -132,14 +133,14 @@ accrualGraph(ondate,startdate=as.Date("2013-06-01"),expmnth=4.5)
 library("readxl")
 
 demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_002.xlsx")
-
+demog2 = demog[demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)"),]
 Site=c("IU","Mayo","VCU", "Total")
 IU = c("Fairbanks Drug and Alcohol Rehabilitation Hospital", "Indiana University Hospital / IU Simon Cancer Center", "Eskenazi Hospital")
 Mayo = "Mayo Clinic"
 VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
-Accrued=c(length(which(demog$STUDY_SITE %in% IU)),length(which(demog$STUDY_SITE %in% Mayo)), length(which(demog$STUDY_SITE %in% VCU)),
-                  nrow(demog))
+Accrued=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
+                  nrow(demog2))
 pander(data.frame(Site,Accrued))
 
 ```
@@ -148,7 +149,7 @@ pander(data.frame(Site,Accrued))
 
 ```{r, echo=FALSE}
 
-ondate = as.Date(na.omit(demog$ON_STUDY_DATE), origin="1899-12-30")
+ondate = as.Date(na.omit(demog2$ON_STUDY_DATE), origin="1899-12-30")
 
 accrualGraph(ondate,startdate=as.Date("2014-12-01"),expenddate=as.Date("2016-03-01"),expmnth=4)
 
@@ -161,14 +162,15 @@ accrualGraph(ondate,startdate=as.Date("2014-12-01"),expenddate=as.Date("2016-03-
 library("readxl")
 
 demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_003.xlsx")
+demog2 = demog[demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)"),]
 
 Site=c("IU","Mayo","VCU", "Total")
 IU = c("Fairbanks Drug and Alcohol Rehabilitation Hospital", "Indiana University Hospital / IU Simon Cancer Center", "Eskenazi Hospital")
 Mayo = "Mayo Clinic"
 VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
-Accrued=c(length(which(demog$STUDY_SITE %in% IU)),length(which(demog$STUDY_SITE %in% Mayo)), length(which(demog$STUDY_SITE %in% VCU)),
-                  nrow(demog))
+Accrued=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
+                  nrow(demog2))
 pander(data.frame(Site,Accrued))
 
 ```
@@ -178,7 +180,7 @@ pander(data.frame(Site,Accrued))
 
 ```{r, echo=FALSE}
 
-ondate = as.Date(na.omit(demog$ON_STUDY_DATE), origin="1899-12-30")
+ondate = as.Date(na.omit(demog2$ON_STUDY_DATE), origin="1899-12-30")
 
 accrualGraph(ondate,startdate=as.Date("2014-12-01"),expenddate=as.Date("2016-03-01"),expmnth=4.5)
 
@@ -191,14 +193,16 @@ accrualGraph(ondate,startdate=as.Date("2014-12-01"),expenddate=as.Date("2016-03-
 library("readxl")
 
 demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_008.xlsx")
+demog2 = demog[demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)"),]
+
 
 Site=c("IU","Mayo","VCU", "Total")
 IU = c("Fairbanks Drug and Alcohol Rehabilitation Hospital", "Indiana University Hospital / IU Simon Cancer Center", "Eskenazi Hospital")
 Mayo = "Mayo Clinic"
 VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
-Accrued=c(length(which(demog$STUDY_SITE %in% IU)),length(which(demog$STUDY_SITE %in% Mayo)), length(which(demog$STUDY_SITE %in% VCU)),
-                  nrow(demog))
+Accrued=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
+                  nrow(demog2))
 pander(data.frame(Site,Accrued))
 
 ```
