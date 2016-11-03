@@ -9,7 +9,9 @@ aya[aya == ""] <- NA
 
 
 #read xls or xlsx
-install.packages("readxl")
+#install.packages("readxl")
+#this version of readxl reads 1000 rows ahead to guess data types instead of 100 rows ahead in Hadley's cran package
+devtools::install_github("bhive01/readxl")
 library("readxl")
 
 datain <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_002.xlsx")
