@@ -4,7 +4,7 @@ output:
   word_document: 
     reference_docx: word_styles.docx
   html_document: default
-date: "October 28, 2016"
+date: " "
 ---
 ---
 
@@ -17,6 +17,8 @@ date: "October 28, 2016"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(pander)
+library(grid)
+library(gridExtra)
 ```
 
 ```{r, echo=FALSE}
@@ -49,6 +51,7 @@ accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expenddate=Sys.Da
   # sum by month and assign total for each month into Accrual vector, since month buckets
   # are summed into beginning of first month, need to move sums one month over for end-of-month
   msum = c(0,cumsum(as.vector(unlist(tapply(enroll2$Count,enroll2$Month,sum)))))
+  
   
   #since seq of months was built by month the enddate will always be the first of the month 
   if(!enddate %in% mnths) {
@@ -84,7 +87,6 @@ accrualGraph = function(ondate, startdate, enddate=Sys.Date(), expenddate=Sys.Da
 library("readxl")
 
 demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_001.xlsx")
-colnames(demog)
 # demog <- read.delim("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_001.txt")
 demog2 = demog[which(demog$ARMS == "CASES" & demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)")),]
 demog3 = demog[which(demog$ARMS == "CONTROLS" & demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)")),]
@@ -99,8 +101,9 @@ Cases=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE 
 Controls=c(length(which(demog3$STUDY_SITE %in% IU)),length(which(demog3$STUDY_SITE %in% Mayo)), length(which(demog3$STUDY_SITE %in% VCU)),
           nrow(demog3))
 Total=c(Cases[1]+Controls[1], Cases[2]+Controls[2], Cases[3]+Controls[3], Cases[4]+Controls[4])
-pander(data.frame(Site,Cases, Controls, Total))
-
+# pander(data.frame(Site,Cases, Controls, Total))
+d = grid.table(data.frame(Site,Cases, Controls, Total), rows = NULL)
+grid.draw(d)
 ```
 
 
@@ -134,14 +137,17 @@ library("readxl")
 
 demog <- read_excel("I:/Projects/TREAT/Data Management/Reports/Enrollment Reports/data/Demographics_002.xlsx")
 demog2 = demog[demog$ELIGIBILITY_STATUS %in% c("Eligible", "Eligible(O)"),]
-Site=c("IU","Mayo","VCU", "Total")
+Site=c("IU","Einstein", "Mayo","VCU", "Total")
 IU = c("Fairbanks Drug and Alcohol Rehabilitation Hospital", "Indiana University Hospital / IU Simon Cancer Center", "Eskenazi Hospital")
+Einstein = "Albert Einstein Health Network (site)"
 Mayo = "Mayo Clinic"
 VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
-Accrued=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
-                  nrow(demog2))
-pander(data.frame(Site,Accrued))
+Accrued=c(length(which(demog2$STUDY_SITE %in% IU)), length(which(demog2$STUDY_SITE %in% Einstein)),
+          length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)), nrow(demog2))  
+# pander(data.frame(Site,Accrued))
+d = grid.table(data.frame(Site,Accrued), rows = NULL)
+grid.draw(d)
 
 ```
 
@@ -171,7 +177,9 @@ VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
 Accrued=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
                   nrow(demog2))
-pander(data.frame(Site,Accrued))
+# pander(data.frame(Site,Accrued))
+d = grid.table(data.frame(Site,Accrued), rows = NULL)
+grid.draw(d)
 
 ```
 
@@ -203,7 +211,9 @@ VCU = "Virginia Commonwealth University (VCU)"
 # enrollment numbers by site and total for CASES
 Accrued=c(length(which(demog2$STUDY_SITE %in% IU)),length(which(demog2$STUDY_SITE %in% Mayo)), length(which(demog2$STUDY_SITE %in% VCU)),
                   nrow(demog2))
-pander(data.frame(Site,Accrued))
+# pander(data.frame(Site,Accrued))
+d = grid.table(data.frame(Site,Accrued), rows = NULL)
+grid.draw(d)
 
 ```
 
